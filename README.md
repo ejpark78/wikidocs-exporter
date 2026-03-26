@@ -124,6 +124,7 @@ tags:
 | Archiver | 확장 프로그램 패키징 |
 | Chrome Manifest V3 | 확장 프로그램 API |
 | chrome.sidePanel API | 사이드 패널 토글 |
+| GitHub Actions | CI/CD 자동화 |
 
 ## 📁 프로젝트 구조
 
@@ -135,6 +136,9 @@ wikidocs-exporter/
 ├── tsconfig.json
 ├── scripts/
 │   └── pack.js           # ZIP 패키징 스크립트
+├── .github/
+│   └── workflows/
+│       └── release.yml    # GitHub Actions CI/CD
 ├── AGENTS.md              # 역할 정의
 ├── PLAN.md                # 개발 계획
 ├── README.md              # 문서
@@ -163,13 +167,26 @@ wikidocs-exporter/
         └── index.ts
 ```
 
-### 패키징
+### 로컬 패키징
 
 ```bash
 npm run pack
 ```
 
 생성 파일: `wikidocs-exporter.zip`
+
+### GitHub Release (자동)
+
+`release/*` 브랜치를 푸시하면 GitHub Actions가 자동으로:
+1. 빌드 실행
+2. ZIP 패키지 생성
+3. Release 생성 + ZIP 첨부
+
+```bash
+# Release 브랜치 생성 및 푸시
+git checkout -b release/v1.0.1
+git push origin release/v1.0.1
+```
 
 ## ⚠️ 제한사항
 
