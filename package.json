@@ -1,0 +1,29 @@
+{
+  "name": "wikidocs-exporter",
+  "version": "1.0.0",
+  "description": "WikiDocs to Obsidian/Joplin Exporter - Chrome Extension",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch",
+    "typecheck": "tsc --noEmit",
+    "pack": "node scripts/pack.js"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "turndown": "^7.1.2",
+    "turndown-plugin-gfm": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.260",
+    "archiver": "^7.0.1",
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^6.10.0",
+    "html-webpack-plugin": "^5.6.0",
+    "sharp": "^0.34.5",
+    "style-loader": "^3.3.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
+  }
+}
