@@ -1,5 +1,9 @@
 # 📚 WikiDocs Exporter
 
+[![Build](https://img.shields.io/github/actions/workflow/status/ejpark78/wikidocs-exporter/release.yml)](https://github.com/ejpark78/wikidocs-exporter/actions)
+[![Version](https://img.shields.io/github/v/release/ejpark78/wikidocs-exporter)](https://github.com/ejpark78/wikidocs-exporter/releases)
+[![License](https://img.shields.io/github/license/ejpark78/wikidocs-exporter)](LICENSE)
+
 위키독스(WikiDocs) 컨텐츠를 **Obsidian** 또는 **Joplin** 노트 앱으로 손쉽게 내보내는 Chrome 확장 프로그램입니다.
 
 ## ✨ 주요 기능
