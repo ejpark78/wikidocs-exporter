@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WikiDocs Exporter",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "위키독스 컨텐츠를 Obsidian 또는 Joplin으로 내보내기",
   "homepage_url": "https://github.com/ejpark78/wikidocs-exporter",
   "permissions": [

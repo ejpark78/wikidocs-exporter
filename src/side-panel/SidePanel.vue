@@ -424,7 +424,10 @@ async function getJoplinToken(): Promise<string | null> {
 }
 
 function startPolling() {
-  pollingInterval = setInterval(loadState, 500);
+  pollingInterval = setInterval(async () => {
+    await loadState();
+    await loadCurrentPageInfo();
+  }, 500);
 }
 
 function saveScrapeDelay() {
