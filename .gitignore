@@ -36,3 +36,5 @@ coverage/
 
 # opencode sessons
 session-*.md
+
+wikidocs-exporter/*
