@@ -48,13 +48,15 @@
 - **Side Panel Toggle**: `chrome.runtime.onMessage`로 `CLOSE_SIDEPANEL` 메시지 수신 후 `window.close()` 호출.
 - **Vue 3 Composition API**: `<script setup lang="ts">` 사용, `ref`, `computed`, `watch`, lifecycle hooks 활용.
 
-## 4. Export Specialist (Obsidian/Joplin)
-- **Role**: 추출된 데이터를 Obsidian/Joplin 친화적 형식으로 변환.
-- **Focus**: YAML Frontmatter 생성, 위키링크, 폴더 구조, 파일 시스템 접근.
+## 4. Export Specialist (Obsidian/Joplin/MarkDown)
+- **Role**: 추출된 데이터를 Obsidian/Joplin/MarkDown 친화적 형식으로 변환.
+- **Focus**: YAML Frontmatter 생성, 링크, 폴더 구조, 파일 시스템 접근.
 - **Joplin Auto-Auth**: `POST /auth` → 사용자 승인 폴링 → `GET /auth/check` 로 토큰 자동 획득
+- **Obsidian API**: Local REST API (`http://127.0.0.1:27123`)로 직접 Vault에 저장
 - **Export Format**:
-  - **Obsidian**: ZIP 파일 다운로드 (JSZip 사용)
+  - **Obsidian**: Local REST API로 Vault에 직접 저장
   - **Joplin**: Background Script를 통한 Data API 호출
+  - **MarkDown**: ZIP 파일 다운로드 (JSZip 사용)
 
 ## 5. Background Service Worker
 - **Role**: Content Script ↔ Side Panel 간 통신 브릿지, Joplin API 연동.
@@ -75,9 +77,10 @@
 |------|------|
 | TypeScript | 타입 안전한 코드 |
 | Vue 3 (Composition API) | 사이드 패널 UI |
-| Webpack 5 | 번들링 |
+| Vite 5 | 번들링 |
+| @crxjs/vite-plugin | Chrome Extension 빌드 |
 | turndown | HTML → Markdown 변환 |
 | turndown-plugin-gfm | GitHub Flavored Markdown 지원 |
-| JSZip | Obsidian용 ZIP 파일 생성 |
+| JSZip | ZIP 파일 생성 |
 | Chrome Manifest V3 | 확장 프로그램 API |
 | chrome.sidePanel API | 사이드 패널 토글 |

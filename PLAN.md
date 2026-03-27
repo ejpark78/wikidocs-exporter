@@ -95,7 +95,7 @@
 
 ## 주요 기술 스택
 - **언어**: TypeScript 5.x
-- **빌드**: Webpack 5
+- **빌드**: Vite 5 + @crxjs/vite-plugin
 - **UI**: Vue 3 (Composition API) + TypeScript
 - **마크다운**: turndown + turndown-plugin-gfm
 - **압축**: JSZip (Obsidian 내보내기), Archiver (패키징)

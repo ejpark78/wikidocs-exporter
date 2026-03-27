@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "WikiDocs to Obsidian/Joplin Exporter - Chrome Extension",
   "scripts": {
-    "build": "webpack --mode production",
-    "dev": "webpack --mode development --watch",
-    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "dev": "vite",
+    "typecheck": "vue-tsc --noEmit",
     "pack": "node scripts/pack.js"
   },
   "dependencies": {
+    "@crxjs/vite-plugin": "^2.4.0",
     "jszip": "^3.10.1",
     "turndown": "^7.1.2",
     "turndown-plugin-gfm": "^1.0.2",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.0.260",
+    "@vitejs/plugin-vue": "^6.0.5",
     "@vue/compiler-sfc": "^3.4.21",
     "archiver": "^7.0.1",
     "copy-webpack-plugin": "^12.0.2",
@@ -24,8 +26,10 @@
     "sharp": "^0.34.5",
     "style-loader": "^3.3.4",
     "ts-loader": "^9.5.1",
-    "typescript": "^5.3.3",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.3",
     "vue-loader": "^17.4.2",
+    "vue-tsc": "^3.2.6",
     "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4"
   }

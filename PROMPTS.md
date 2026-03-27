@@ -25,7 +25,7 @@
 
 ### **A. Architecture & UI**
 - **Side Panel as Vue 3 SPA**: Vue 3 (Composition API + `<script setup lang="ts">`)로 사이드 패널 구현
-- **Vue Loader 설정**: webpack에 vue-loader, @vue/compiler-sfc 설정
+- **Vite 설정**: @crxjs/vite-plugin 활용
 - **Side Panel Toggle**: 익스텐션 아이콘 클릭으로 사이드 패널 열기/닫기
 - **Chrome Storage Sync**: `chrome.storage.local`과 Vue 반응형 상태 동기화
 
@@ -42,25 +42,26 @@
 - **Index File**: 챕터별 위키링크가 포함된 INDEX.md 생성
 
 ### **D. DevOps**
-- **Bundler**: Webpack 5
+- **Bundler**: Vite 5 + @crxjs/vite-plugin
 - **CI/CD**: GitHub Actions 자동 릴리즈
 - **Packaging**: `npm run pack`으로 ZIP 생성
 
-## **기술 스택**
+## 기술 스택
 
 | 기술 | 용도 |
 |------|------|
 | TypeScript | 타입 안전한 코드 |
 | Vue 3 (Composition API) | 사이드 패널 UI |
-| Webpack 5 | 번들링 |
+| Vite 5 | 번들링 |
+| @crxjs/vite-plugin | Chrome Extension 빌드 |
 | turndown | HTML → Markdown 변환 |
 | turndown-plugin-gfm | GitHub Flavored Markdown |
-| JSZip | Obsidian용 ZIP 생성 |
+| JSZip | ZIP 생성 |
 | Chrome Manifest V3 | 확장 프로그램 API |
 
 ## **Deliverables**
 - `src/side-panel/SidePanel.vue` - Vue 3 컴포넌트
 - `src/side-panel/main.ts` - Vue 앱 엔트리
 - `manifest.json` - Side Panel 설정 포함
-- `webpack.config.js` - Vue 로더 설정
+- `vite.config.ts` - Vite 빌드 설정
 - `.github/workflows/release.yml` - CI/CD 파이프라인

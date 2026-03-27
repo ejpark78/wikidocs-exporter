@@ -29,13 +29,17 @@
     "default_path": "src/side-panel/side-panel.html"
   },
   "background": {
-    "service_worker": "src/background/background.ts",
+    "service_worker": "service-worker-loader.js",
     "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["https://wikidocs.net/*"],
-      "js": ["src/content/content.ts"],
+      "js": [
+        "assets/content.ts-loader-DMtoFMtQ.js"
+      ],
+      "matches": [
+        "https://wikidocs.net/*"
+      ],
       "run_at": "document_idle"
     }
   ],
@@ -43,5 +47,17 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "https://wikidocs.net/*"
+      ],
+      "resources": [
+        "assets/storage-B_SUJJ_j.js",
+        "assets/content.ts-Bjze7VuZ.js"
+      ],
+      "use_dynamic_url": false
+    }
+  ]
 }

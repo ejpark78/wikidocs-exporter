@@ -15,12 +15,13 @@
 - 📚 **여러 책 동시 관리**: 여러 책을 한 번에 스크랩하고 개별 관리
 - ⏱️ **실시간 진행률**: 실행시간/예상총시간 표시
 - ⏹️ **중단 기능**: 크롤링 중 언제든지 중단 가능
-- 🖼️ **이미지 포함**: 이미지 자동 다운로드 및 상대 경로 처리
-- 📝 **YAML Frontmatter**: Obsidian 친화적 메타데이터 자동 생성
-- 📑 **인덱스 파일**: 챕터별 위키링크가 포함된 INDEX.md 생성
+- 🖼️ **이미지 포함**: 이미지 자동 다운로드 및 상대 경로 처리 (항상 활성화)
+- 📝 **YAML Frontmatter**: Obsidian 친화적 메타데이터 자동 생성 (항상 활성화)
+- 📑 **인덱스 파일**: 챕터별 링크가 포함된 INDEX.md 생성 (항상 활성화)
+- 💾 **다양한 내보내기**: Obsidian (Local REST API), Joplin (API), MarkDown (ZIP)
 - 🎨 **다크 테마 사이드바**: 시각적으로 깔끔한 UI
 - ⚙️ **스크랩 딜레이 설정**: 0~15초 슬라이더로 조절
-- 📤 **책별 내보내기**: 개별 책 다운로드/삭제
+- 📤 **책별 내보내기**: 개별 책 내보내기/삭제
 - 🔄 **사이드 패널 토글**: 아이콘 클릭으로 열기/닫기 전환
 
 ## 🚀 설치 방법
@@ -77,27 +78,50 @@ npm run pack
 - 각 책은 독립적으로 다운로드/삭제 가능
 - 동일 제목의 책은 자동으로 덮어쓰기
 
-### 설정 옵션
+### 내보내기 대상
 
-| 옵션 | 설명 |
+| 대상 | 설명 |
 |------|------|
-| **내보내기 대상** | Obsidian (ZIP 다운로드) 또는 Joplin (API 연동) |
-| **이미지 포함** | 이미지 다운로드 여부 |
-| **YAML Frontmatter 추가** | 메타데이터 포함 여부 |
-| **인덱스 파일 생성** | INDEX.md 생성 여부 |
-| **스크랩 딜레이** | 챕터 간 딜레이 (0~15초) |
+| **Obsidian** | Local REST API로 직접 Vault에 저장 |
+| **Joplin** | Data API로 직접 노트에 저장 |
+| **MarkDown** | ZIP 파일 다운로드 |
+
+### Obsidian 연동 설정
+
+1. Obsidian 앱 실행
+2. **Settings → Community Plugins** → "Local REST API" 설치
+3. 플러그인 활성화
+4. **Settings → Local REST API** → API Key 복사
+5. 확장 프로그램에서 API Key 입력 후 "연결" 클릭
 
 ### Joplin 연동 설정
 
 1. Joplin 앱 실행
 2. **도구 → 웹 클리퍼** 활성화
-3. 사이드바에서 **Joplin** 선택
-4. **"Joplin 연결하기"** 버튼 클릭
-5. Joplin 앱에서 팝업 요청 허용
+3. **"Joplin 연결하기"** 버튼 클릭
+4. Joplin 앱에서 팝업 요청 허용
 
 **연결 해제**: 연결 상태에서 "연결 해제" 버튼 클릭
 
-## 📂 Obsidian 내보내기 구조
+### 스크랩 딜레이
+
+- 챕터 간 딜레이: 0~15초 조절
+- 너무 빠른 크롤링은 Cloudflare에 의해 차단될 수 있습니다
+
+## 📂 Obsidian/Joplin 내보내기 구조
+
+```
+WikiDocs/
+└── 강의명/
+    ├── images/
+    │   ├── image1.png
+    │   └── image2.png
+    ├── 01-챕터제목.md
+    ├── 02-챕터제목.md
+    └── INDEX.md
+```
+
+### MarkDown 내보내기 구조 (ZIP)
 
 ```
 강의명.zip
@@ -128,10 +152,11 @@ tags:
 |------|------|
 | TypeScript | 타입 안전한 코드 |
 | Vue 3 (Composition API) | 사이드 패널 UI |
-| Webpack 5 | 번들링 |
+| Vite 5 | 번들링 |
+| @crxjs/vite-plugin | Chrome Extension 빌드 |
 | Turndown | HTML → Markdown 변환 |
 | turndown-plugin-gfm | GitHub Flavored Markdown 지원 |
-| JSZip | Obsidian용 ZIP 파일 생성 |
+| JSZip | ZIP 파일 생성 |
 | Archiver | 확장 프로그램 패키징 |
 | Chrome Manifest V3 | 확장 프로그램 API |
 | chrome.sidePanel API | 사이드 패널 토글 |
@@ -143,7 +168,7 @@ tags:
 wikidocs-exporter/
 ├── manifest.json           # Chrome Extension 매니페스트 (V3)
 ├── package.json
-├── webpack.config.js      # 빌드 설정
+├── vite.config.ts          # Vite 빌드 설정
 ├── tsconfig.json
 ├── scripts/
 │   └── pack.js           # ZIP 패키징 스크립트
@@ -216,7 +241,9 @@ npm run pack
 ## ⚠️ 제한사항
 
 - 위키독스 사이트에서만 작동합니다
-- Joplin 연동은 Joplin 앱이 실행 중이어야 합니다
+- Obsidian/Joplin 연동은 각 앱이 실행 중이어야 합니다
+- Obsidian은 "Local REST API" 플러그인이 필요합니다
+- Joplin은 "웹 클리퍼"가 활성화되어 있어야 합니다
 - 너무 빠른 크롤링은 Cloudflare에 의해 차단될 수 있습니다 (딜레이 조절 권장)
 
 ## 📝 라이선스

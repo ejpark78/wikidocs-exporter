@@ -28,7 +28,7 @@ export interface ExportProgress {
   error?: string;
 }
 
-export type ExportTarget = 'obsidian' | 'joplin';
+export type ExportTarget = 'obsidian' | 'joplin' | 'markdown';
 
 export interface ExportOptions {
   target: ExportTarget;

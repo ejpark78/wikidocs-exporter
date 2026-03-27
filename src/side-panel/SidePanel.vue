@@ -25,10 +25,9 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">⚙️ 설정</h2>
+        <h2 class="section-title">📥 스크랩</h2>
         
         <div class="option-group">
-          <label class="option-label">⚙️ 스크랩 간격</label>
           <div class="slider-group">
             <input 
               type="range" 
@@ -38,12 +37,42 @@
               max="15"
               @change="saveScrapeDelay"
             >
-            <span class="delay-value">{{ scrapeDelay }}초</span>
+            <span class="delay-value">스크랩 간격: {{ scrapeDelay }}초</span>
           </div>
         </div>
+        
+        <div class="button-group">
+          <button 
+            v-if="progress?.status !== 'scraping' && progress?.status !== 'exporting'"
+            @click="handleScrape" 
+            class="btn btn-primary"
+          >
+            <span>🔍</span> 스크랩 시작
+          </button>
+          <button 
+            v-if="progress?.status === 'scraping' || progress?.status === 'exporting'"
+            @click="handleStop" 
+            class="btn btn-warning"
+          >
+            <span>⏹️</span> 중단
+          </button>
+        </div>
+        <div class="status-section">
+          <div class="status-row">
+            <div :class="['status-indicator', progress?.status || 'idle']"></div>
+            <span class="status-text">{{ statusText }}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: progress?.progress + '%' }"></div>
+          </div>
+          <div class="chapter-info">{{ chapterInfoText }}</div>
+        </div>
+      </section>
 
+      <section class="section">
+        <h2 class="section-title">💾 저장위치</h2>
+        
         <div class="option-group">
-          <label class="option-label">내보내기 대상</label>
           <div class="radio-group">
             <label class="radio-item">
               <input type="radio" v-model="options.target" value="obsidian">
@@ -55,31 +84,45 @@
               <span class="radio-check"></span>
               <span>📒 Joplin</span>
             </label>
+            <label class="radio-item">
+              <input type="radio" v-model="options.target" value="markdown">
+              <span class="radio-check"></span>
+              <span>📄 MarkDown</span>
+            </label>
           </div>
         </div>
 
-        <div class="option-group">
-          <label class="checkbox-item">
-            <input type="checkbox" v-model="options.includeImages">
-            <span class="checkbox-check"></span>
-            <span>이미지 포함</span>
-          </label>
-        </div>
-
-        <div class="option-group">
-          <label class="checkbox-item">
-            <input type="checkbox" v-model="options.addFrontmatter">
-            <span class="checkbox-check"></span>
-            <span>YAML Frontmatter 추가</span>
-          </label>
-        </div>
-
-        <div class="option-group">
-          <label class="checkbox-item">
-            <input type="checkbox" v-model="options.createIndex">
-            <span class="checkbox-check"></span>
-            <span>인덱스 파일 생성</span>
-          </label>
+        <div v-if="options.target === 'obsidian'" class="option-group">
+          <label class="option-label">Obsidian 연결</label>
+          
+          <template v-if="!obsidianConnected">
+            <div class="token-input-group">
+              <input 
+                type="password" 
+                v-model="obsidianApiKey" 
+                placeholder="API Key 입력"
+                class="token-input"
+              >
+              <button 
+                @click="handleConnectObsidian" 
+                class="btn btn-small btn-primary"
+                :disabled="isConnectingObsidian"
+              >
+                {{ isConnectingObsidian ? '연결 확인 중...' : '연결' }}
+              </button>
+            </div>
+            <small class="help-text">
+              Obsidian → Settings → Local REST API → API Key
+            </small>
+          </template>
+          
+          <template v-else>
+            <div class="token-status">
+              <span class="token-status-icon">✅</span>
+              <span>Obsidian 연결됨</span>
+              <button @click="handleDisconnectObsidian" class="btn btn-small btn-danger">연결 해제</button>
+            </div>
+          </template>
         </div>
 
         <div v-if="options.target === 'joplin'" class="option-group">
@@ -107,36 +150,6 @@
               <button @click="handleDisconnectJoplin" class="btn btn-small btn-danger">연결 해제</button>
             </div>
           </template>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2 class="section-title">📥 작업</h2>
-        <div class="button-group">
-          <button 
-            v-if="progress?.status !== 'scraping' && progress?.status !== 'exporting'"
-            @click="handleScrape" 
-            class="btn btn-primary"
-          >
-            <span>🔍</span> 스크랩 시작
-          </button>
-          <button 
-            v-if="progress?.status === 'scraping' || progress?.status === 'exporting'"
-            @click="handleStop" 
-            class="btn btn-warning"
-          >
-            <span>⏹️</span> 중단
-          </button>
-        </div>
-        <div class="status-section">
-          <div class="status-row">
-            <div :class="['status-indicator', progress?.status || 'idle']"></div>
-            <span class="status-text">{{ statusText }}</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" :style="{ width: progress?.progress + '%' }"></div>
-          </div>
-          <div class="chapter-info">{{ chapterInfoText }}</div>
         </div>
       </section>
 
@@ -186,6 +199,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { loadOptions, saveOptions } from '../utils/storage';
 import { exportToObsidian } from '../export';
+import { exportToMarkdown } from '../export/markdown';
 import type { ExportOptions, ExportProgress, WikiDocsBook } from '../types/wikidocs';
 
 const currentPage = ref<{ title: string; url: string }>({ title: '', url: '' });
@@ -195,6 +209,9 @@ const error = ref<string>('');
 const joplinToken = ref<string>('');
 const tokenSaveText = ref<string>('저장');
 const isGettingToken = ref<boolean>(false);
+const obsidianConnected = ref<boolean>(false);
+const isConnectingObsidian = ref<boolean>(false);
+const obsidianApiKey = ref<string>('');
 const scrapeDelay = ref<number>(3);
 const scrapeStartTime = ref<number | null>(null);
 
@@ -267,6 +284,72 @@ async function loadJoplinToken() {
   if (stored.joplin_token) {
     joplinToken.value = stored.joplin_token;
   }
+}
+
+async function checkObsidianConnection() {
+  const stored = await chrome.storage.local.get('obsidian_api_key');
+  if (stored.obsidian_api_key) {
+    obsidianApiKey.value = stored.obsidian_api_key;
+    await verifyObsidianConnection();
+  }
+}
+
+async function verifyObsidianConnection() {
+  if (!obsidianApiKey.value) return;
+  
+  try {
+    const response = await fetch('http://127.0.0.1:27123/', {
+      headers: {
+        'Authorization': `Bearer ${obsidianApiKey.value}`
+      }
+    });
+    obsidianConnected.value = response.ok;
+  } catch {
+    obsidianConnected.value = false;
+  }
+}
+
+async function handleConnectObsidian() {
+  isConnectingObsidian.value = true;
+  error.value = '';
+  
+  if (!obsidianApiKey.value) {
+    error.value = 'Obsidian API 키를 입력해주세요.\n\nObsidian → Settings → Local REST API → API Key에서 확인';
+    isConnectingObsidian.value = false;
+    return;
+  }
+  
+  try {
+    const response = await fetch('http://127.0.0.1:27123/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${obsidianApiKey.value}`
+      }
+    });
+    console.log('Obsidian API response:', response.status, response.statusText);
+    const text = await response.text();
+    console.log('Obsidian API body:', text);
+    
+    if (response.ok) {
+      obsidianConnected.value = true;
+      await chrome.storage.local.set({ obsidian_api_key: obsidianApiKey.value });
+      alert('Obsidian에 연결되었습니다!');
+    } else {
+      const errorText = await response.text();
+      console.error('Obsidian API error:', errorText);
+      error.value = `Obsidian 연결 실패: ${response.status}\nAPI 키가 올바른지 확인해주세요.`;
+    }
+  } catch (e) {
+    console.error('Obsidian connection error:', e);
+    error.value = 'Obsidian에 연결할 수 없습니다.\n\n1. Obsidian 실행 중인지 확인\n2. Local REST API 플러그인 활성화\n3. 올바른 API 키인지 확인';
+  } finally {
+    isConnectingObsidian.value = false;
+  }
+}
+
+function handleDisconnectObsidian() {
+  obsidianConnected.value = false;
+  chrome.storage.local.set({ obsidian_connected: false });
 }
 
 async function handleAutoGetToken() {
@@ -347,6 +430,9 @@ async function handleExportSingleBook(index: number) {
     if (options.value.target === 'obsidian') {
       await exportToObsidian(books.value[index], options.value);
       progress.value = { ...progress.value, status: 'completed', progress: 100 } as ExportProgress;
+    } else if (options.value.target === 'markdown') {
+      await exportToMarkdown(books.value[index], options.value);
+      progress.value = { ...progress.value, status: 'completed', progress: 100 } as ExportProgress;
     } else {
       const token = await getJoplinToken();
       if (!token) {
@@ -403,11 +489,6 @@ async function handleScrape() {
   scrapeStartTime.value = Date.now();
 
   try {
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['content.js'],
-    });
-
     chrome.tabs.sendMessage(tab.id, {
       type: 'START_SCRAPE',
       payload: { options: options.value },
@@ -438,8 +519,9 @@ watch(options, async (newOptions) => {
   await saveOptions(newOptions);
 }, { deep: true });
 
-onMounted(() => {
+onMounted(async () => {
   init();
+  await checkObsidianConnection();
   
   chrome.runtime.onMessage.addListener((message) => {
     if (message.type === 'CLOSE_SIDEPANEL') {

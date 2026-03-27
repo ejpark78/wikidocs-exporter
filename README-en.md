@@ -15,12 +15,13 @@ A Chrome extension to export WikiDocs (https://wikidocs.net/) content to **Obsid
 - 📚 **Multiple Books**: Scrape multiple books and manage them individually
 - ⏱️ **Real-time Progress**: Display elapsed time / estimated total time
 - ⏹️ **Stop Feature**: Stop crawling anytime
-- 🖼️ **Image Support**: Automatic image download with relative paths
-- 📝 **YAML Frontmatter**: Auto-generated Obsidian-friendly metadata
-- 📑 **Index File**: Generate INDEX.md with chapter wikilinks
+- 🖼️ **Image Support**: Automatic image download with relative paths (always enabled)
+- 📝 **YAML Frontmatter**: Auto-generated Obsidian-friendly metadata (always enabled)
+- 📑 **Index File**: Generate INDEX.md with chapter links (always enabled)
+- 💾 **Multiple Export Targets**: Obsidian (Local REST API), Joplin (API), MarkDown (ZIP)
 - 🎨 **Dark Theme Sidebar**: Clean visual UI
 - ⚙️ **Scrape Delay Setting**: Adjustable 0-15 second slider
-- 📤 **Per-book Export**: Individual book download/delete
+- 📤 **Per-book Export**: Individual book export/delete
 - 🔄 **Side Panel Toggle**: Open/close with icon click
 
 ## 🚀 Installation
@@ -77,25 +78,35 @@ npm run pack
 - Each book can be downloaded/deleted independently
 - Same title books are automatically overwritten
 
-### Settings Options
+### Export Target
 
-| Option | Description |
+| Target | Description |
 |--------|-------------|
-| **Export Target** | Obsidian (ZIP download) or Joplin (API) |
-| **Include Images** | Whether to download images |
-| **Add YAML Frontmatter** | Include metadata |
-| **Create Index File** | Generate INDEX.md |
-| **Scrape Delay** | Delay between chapters (0-15 seconds) |
+| **Obsidian** | Save directly to Vault via Local REST API |
+| **Joplin** | Save directly to notes via Data API |
+| **MarkDown** | Download as ZIP file |
+
+### Obsidian Connection
+
+1. Run Obsidian app
+2. **Settings → Community Plugins** → Install "Local REST API"
+3. Enable the plugin
+4. **Settings → Local REST API** → Copy API Key
+5. Enter API Key in extension and click "Connect"
 
 ### Joplin Connection
 
 1. Run Joplin app
 2. Enable **Tools → Web Clipper**
-3. Select **Joplin** in sidebar
-4. Click **"Connect to Joplin"** button
-5. Allow popup request in Joplin app
+3. Click **"Connect to Joplin"** button
+4. Allow popup request in Joplin app
 
 **Disconnect**: Click "Disconnect" button when connected
+
+### Scrape Delay
+
+- Delay between chapters: 0-15 seconds adjustable
+- Too fast crawling may be blocked by Cloudflare
 
 ## 📂 Obsidian Export Structure
 
@@ -128,10 +139,11 @@ tags:
 |------|---------|
 | TypeScript | Type-safe code |
 | Vue 3 (Composition API) | Side Panel UI |
-| Webpack 5 | Bundling |
+| Vite 5 | Bundling |
+| @crxjs/vite-plugin | Chrome Extension build |
 | Turndown | HTML to Markdown |
 | turndown-plugin-gfm | GitHub Flavored Markdown |
-| JSZip | ZIP file creation for Obsidian |
+| JSZip | ZIP file creation |
 | Archiver | Extension packaging |
 | Chrome Manifest V3 | Extension API |
 | chrome.sidePanel API | Side Panel toggle |
@@ -143,7 +155,7 @@ tags:
 wikidocs-exporter/
 ├── manifest.json           # Chrome Extension manifest (V3)
 ├── package.json
-├── webpack.config.js      # Build config
+├── vite.config.ts         # Vite build config
 ├── tsconfig.json
 ├── scripts/
 │   └── pack.js           # ZIP packaging script
@@ -216,7 +228,9 @@ npm run pack
 ## ⚠️ Limitations
 
 - Works only on WikiDocs site
-- Joplin integration requires Joplin app to be running
+- Obsidian/Joplin connection requires respective app to be running
+- Obsidian requires "Local REST API" plugin
+- Joplin requires "Web Clipper" to be enabled
 - Too fast crawling may be blocked by Cloudflare (adjust delay recommended)
 
 ## 📝 License
