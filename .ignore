@@ -1,0 +1,9 @@
+# release
+*.zip
+
+# opencode sessons
+session-*.md
+
+wikidocs-exporter/*
+
+logs/*

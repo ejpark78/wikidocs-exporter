@@ -38,3 +38,5 @@ coverage/
 session-*.md
 
 wikidocs-exporter/*
+
+logs/*

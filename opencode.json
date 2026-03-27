@@ -1,0 +1,89 @@
+{
+  "name": "wikidocs-exporter",
+  "root": ".",
+  "type": "project",
+  "language": "typescript",
+  "backend": "none",
+  "architecture": "monorepo",
+  "frontend": {
+    "framework": "vue",
+    "version": "3.x",
+    "buildTool": "vite",
+    "plugins": [
+      "@crxjs/vite-plugin"
+    ]
+  },
+  "extension": {
+    "type": "chrome-extension",
+    "manifestVersion": 3,
+    "platform": ["chrome", "edge"]
+  },
+  "testing": {
+    "framework": "vitest",
+    "files": ["**/*.test.ts", "**/*.spec.ts"]
+  },
+  "dev": {
+    "commands": {
+      "build": "vite build",
+      "dev": "vite",
+      "typecheck": "vue-tsc --noEmit",
+      "pack": "node scripts/pack.js"
+    },
+    "directories": {
+      "src": "src",
+      "dist": "dist",
+      "assets": "assets",
+      "icons": "icons"
+    }
+  },
+  "rules": {
+    "typescript": true,
+    "vue": true,
+    "importOrder": [
+      "vue",
+      "vue/*",
+      "@vue",
+      "@vue/*",
+      "@crxjs",
+      "@crxjs/*",
+      "<THIRD_PARTY>",
+      "<DEFAULT>"
+    ],
+    "componentNaming": "PascalCase"
+  },
+  "ci": {
+    "install": "npm install",
+    "build": "npm run build",
+    "test": "npm run typecheck"
+  },
+  "lint": {
+    "enabled": true,
+    "commands": [
+      "npm run typecheck"
+    ],
+    "ignore": [
+      "dist/**/*",
+      "node_modules/**/*"
+    ]
+  },
+  "types": [
+    "node_modules/@types/chrome/index.d.ts"
+  ],
+  "config": {
+    "vite": "vite.config.ts",
+    "tsconfig": "tsconfig.json",
+    "webpack": null,
+    "tsconfigPath": null
+  },
+  "experiments": {
+    "preview": false,
+    "useRemix": false,
+    "useNext": false
+  },
+  "plugins": [],
+  "configuration": {
+    "author": "ejpark78",
+    "homepage": "https://github.com/ejpark78/wikidocs-exporter",
+    "license": "MIT"
+  }
+}

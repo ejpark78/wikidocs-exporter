@@ -55,6 +55,42 @@
 - [x] 패키징 스크립트: `npm run pack`으로 ZIP 생성.
 - [ ] Chrome Web Store 배포 준비.
 
+## 7단계: 향후 기능 개발 🚀 향후 계획
+
+### 기능 추가 제안 (Feature Enhancements)
+자세한 내용은 [FEATURE_ENHANCEMENTS.md](./FEATURE_ENHANCEMENTS.md) 참조
+
+#### 즉시 구현 (Immediate)
+- API 키 암호화 저장
+- Joplin 토큰 자동 갱신
+- Obsidian 연결 유효성 검증
+- 로컬 서버 접근 제한
+
+#### 중장기 구현 (Medium-term)
+- 챕터 선택 기능
+- 이미지 다운로드 병렬 처리
+- 실패 시 자동 재시도
+- 환경 설정 공유
+
+#### 고급 기능 (Advanced)
+- GitHub Wiki 지원
+- Notion API 연동
+- 기능 플러그인 시스템
+- CSV/Excel 형식 지원
+
+### 보안 강화 제안 (Security Enhancements)
+자세한 내용은 [FEATURE_ENHANCEMENTS.md](./FEATURE_ENHANCEMENTS.md) 참조
+
+#### 기본 보안
+- API 키 암호화
+- 로컬 서버 접근 제한
+- CORS 설정 보강
+
+#### 고급 보안
+- 이미지 데이터 암호화
+- 비정상적 활동 감지
+- 사용자 행동 로깅
+
 ## 완료된 주요 기능
 
 ### 스크래핑
