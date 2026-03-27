@@ -56,11 +56,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to Chrome Web Store
-        uses: enixx/chrome-webstore-upload-action@main
+        uses: qax-objectQA/chrome-webstore-upload-action@main
         with:
           file: wikidocs-exporter.zip
           extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
           refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
-          publish-target: 'default'
