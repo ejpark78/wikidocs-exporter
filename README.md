@@ -191,7 +191,6 @@ npm run pack
 1. 빌드 실행
 2. ZIP 패키지 생성
 3. Release 생성 + ZIP 첨부
-4. **Chrome Web Store 자동 배포**
 
 ```bash
 # Release 브랜치 생성 및 푸시
@@ -199,15 +198,18 @@ git checkout -b release/v1.2.0
 git push origin release/v1.2.0
 ```
 
-### Chrome Web Store 배포 설정
+### Chrome Web Store 배포 (수동)
 
-자동 배포를 위해 GitHub Secrets 설정 필요:
-- `CHROME_EXTENSION_ID`: 확장 프로그램 ID
-- `CHROME_CLIENT_ID`: GCP OAuth Client ID
-- `CHROME_CLIENT_SECRET`: GCP OAuth Client Secret
-- `CHROME_REFRESH_TOKEN`: OAuth Refresh Token
+ZIP 파일을 생성하여 Chrome Web Store에 수동으로 업로드합니다:
 
-설정 방법은 [Google Cloud Console](https://console.cloud.google.com/)에서 OAuth 2.0 클라이언트 생성 후 확인하세요.
+```bash
+npm run pack
+```
+
+1. `chrome://extensions` 열기
+2. **개발자 모드** 활성화
+3. **압축해제된 확장 프로그램 로드**로 `dist` 폴더 선택 (테스트용)
+4. 또는 `wikidocs-exporter.zip` 파일을 Chrome 개발자 대시보드에 업로드
 
 ## ⚠️ 제한사항
 
