@@ -92,7 +92,8 @@ npm run pack
 2. **Settings → Community Plugins** → Install "Local REST API"
 3. Enable the plugin
 4. **Settings → Local REST API** → Copy API Key
-5. Enter API Key in extension and click "Connect"
+5. **Settings → Local REST API** → Enable **Enable Non-encrypted (HTTP) Server**
+6. Enter API Key in extension and click "Connect"
 
 ### Joplin Connection
 

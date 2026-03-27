@@ -112,7 +112,8 @@
               </button>
             </div>
             <small class="help-text">
-              Obsidian → Settings → Local REST API → API Key
+              Obsidian → Settings → Local REST API → API Key<br>
+              (Settings에서 "Enable Non-encrypted (HTTP) Server" 활성화)
             </small>
           </template>
           
@@ -314,7 +315,7 @@ async function handleConnectObsidian() {
   error.value = '';
   
   if (!obsidianApiKey.value) {
-    error.value = 'Obsidian API 키를 입력해주세요.\n\nObsidian → Settings → Local REST API → API Key에서 확인';
+    error.value = 'Obsidian API 키를 입력해주세요.\n\nObsidian → Settings → Local REST API → API Key\n(Settings에서 "Enable Non-encrypted (HTTP) Server" 활성화)';
     isConnectingObsidian.value = false;
     return;
   }
@@ -341,7 +342,7 @@ async function handleConnectObsidian() {
     }
   } catch (e) {
     console.error('Obsidian connection error:', e);
-    error.value = 'Obsidian에 연결할 수 없습니다.\n\n1. Obsidian 실행 중인지 확인\n2. Local REST API 플러그인 활성화\n3. 올바른 API 키인지 확인';
+    error.value = 'Obsidian에 연결할 수 없습니다.\n\n1. Obsidian 실행 중인지 확인\n2. Local REST API 플러그인 활성화\n3. Settings에서 "Enable Non-encrypted (HTTP) Server" 활성화\n4. 올바른 API 키인지 확인';
   } finally {
     isConnectingObsidian.value = false;
   }

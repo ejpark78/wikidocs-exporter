@@ -6,7 +6,7 @@ const OBSIDIAN_API_URL = 'http://127.0.0.1:27123';
 async function getApiKey(): Promise<string> {
   const stored = await chrome.storage.local.get('obsidian_api_key');
   if (!stored.obsidian_api_key) {
-    throw new Error('Obsidian API 키가 설정되지 않았습니다.\n\nObsidian → Settings → Local REST API → API Key에서 확인');
+    throw new Error('Obsidian API 키가 설정되지 않았습니다.\n\nObsidian → Settings → Local REST API → API Key\n(Settings에서 "Enable Non-encrypted (HTTP) Server" 활성화)');
   }
   return stored.obsidian_api_key;
 }
@@ -19,7 +19,7 @@ export async function exportToObsidian(
   
   const apiKey = await getApiKey();
   const folderName = sanitizeFilename(book.title);
-  const folderPath = `WikiDocs/${folderName}`;
+  const folderPath = `/WikiDocs/${folderName}`;
 
   if (options.includeImages) {
     for (const chapter of book.chapters) {

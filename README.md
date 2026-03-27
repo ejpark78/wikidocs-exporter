@@ -92,7 +92,8 @@ npm run pack
 2. **Settings → Community Plugins** → "Local REST API" 설치
 3. 플러그인 활성화
 4. **Settings → Local REST API** → API Key 복사
-5. 확장 프로그램에서 API Key 입력 후 "연결" 클릭
+5. **Settings → Local REST API** → **Enable Non-encrypted (HTTP) Server** 활성화
+6. 확장 프로그램에서 API Key 입력 후 "연결" 클릭
 
 ### Joplin 연동 설정
 
