@@ -39,7 +39,7 @@ export interface ExportOptions {
 }
 
 export interface Message {
-  type: 'START_SCRAPE' | 'SCRAPE_PROGRESS' | 'SCRAPE_COMPLETE' | 'SCRAPE_ERROR' | 'EXPORT' | 'EXPORT_COMPLETE' | 'GET_STATE' | 'JOPLIN_EXPORT' | 'STOP_SCRAPE';
+  type: 'START_SCRAPE' | 'SCRAPE_PROGRESS' | 'SCRAPE_COMPLETE' | 'SCRAPE_ERROR' | 'EXPORT' | 'EXPORT_COMPLETE' | 'GET_STATE' | 'JOPLIN_EXPORT' | 'JOPLIN_GET_TOKEN' | 'STOP_SCRAPE';
   payload?: unknown;
 }
 

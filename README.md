@@ -88,9 +88,12 @@ npm run pack
 ### Joplin 연동 설정
 
 1. Joplin 앱 실행
-2. **도구 → 웹 클리퍼** 열기
-3. **고급 옵션**에서 API 토큰 복사
-4. 사이드바에서 Joplin 선택 → 토큰 입력 → **저장** 클릭
+2. **도구 → 웹 클리퍼** 활성화
+3. 사이드바에서 **Joplin** 선택
+4. **"Joplin 연결하기"** 버튼 클릭
+5. Joplin 앱에서 팝업 요청 허용
+
+**연결 해제**: 연결 상태에서 "연결 해제" 버튼 클릭
 
 ## 📂 Obsidian 내보내기 구조
 
@@ -122,6 +125,7 @@ tags:
 | 기술 | 용도 |
 |------|------|
 | TypeScript | 타입 안전한 코드 |
+| Vue 3 (Composition API) | 사이드 패널 UI |
 | Webpack 5 | 번들링 |
 | Turndown | HTML → Markdown 변환 |
 | turndown-plugin-gfm | GitHub Flavored Markdown 지원 |
@@ -151,25 +155,26 @@ wikidocs-exporter/
 ├── CONTRIBUTING.md       # 기여 가이드
 ├── ISSUES.md              # 이슈 템플릿
 ├── LICENSE.md             # MIT 라이선스
-└── src/
-    ├── types/
-    │   ├── wikidocs.ts    # 타입 정의
-    │   └── turndown.d.ts  # turndown 타입
-    ├── utils/
-    │   ├── markdown.ts    # 마크다운 변환 유틸
-    │   └── storage.ts     # Chrome Storage 유틸
-    ├── content/
-    │   └── content.ts     # Content Script (크롤링)
-    ├── background/
-    │   └── background.ts  # Background Service Worker
-    ├── side-panel/
-    │   ├── side-panel.html
-    │   ├── side-panel.css
-    │   └── side-panel.ts
-    └── export/
-        ├── base.ts        # 공통 유틸
-        ├── obsidian.ts    # Obsidian 내보내기
-        └── index.ts
+├── src/
+│   ├── types/
+│   │   ├── wikidocs.ts    # 타입 정의
+│   │   └── turndown.d.ts  # turndown 타입
+│   ├── utils/
+│   │   ├── markdown.ts    # 마크다운 변환 유틸
+│   │   └── storage.ts     # Chrome Storage 유틸
+│   ├── content/
+│   │   └── content.ts     # Content Script (크롤링)
+│   ├── background/
+│   │   └── background.ts  # Background Service Worker
+│   ├── side-panel/
+│   │   ├── main.ts        # Vue 앱 엔트리
+│   │   ├── SidePanel.vue  # Vue 3 컴포넌트
+│   │   ├── side-panel.html
+│   │   └── side-panel.css
+│   └── export/
+│       ├── base.ts        # 공통 유틸
+│       ├── obsidian.ts    # Obsidian 내보내기
+│       └── index.ts
 ```
 
 ### 로컬 패키징
@@ -186,12 +191,23 @@ npm run pack
 1. 빌드 실행
 2. ZIP 패키지 생성
 3. Release 생성 + ZIP 첨부
+4. **Chrome Web Store 자동 배포**
 
 ```bash
 # Release 브랜치 생성 및 푸시
-git checkout -b release/v1.0.1
-git push origin release/v1.0.1
+git checkout -b release/v1.2.0
+git push origin release/v1.2.0
 ```
+
+### Chrome Web Store 배포 설정
+
+자동 배포를 위해 GitHub Secrets 설정 필요:
+- `CHROME_EXTENSION_ID`: 확장 프로그램 ID
+- `CHROME_CLIENT_ID`: GCP OAuth Client ID
+- `CHROME_CLIENT_SECRET`: GCP OAuth Client Secret
+- `CHROME_REFRESH_TOKEN`: OAuth Refresh Token
+
+설정 방법은 [Google Cloud Console](https://console.cloud.google.com/)에서 OAuth 2.0 클라이언트 생성 후 확인하세요.
 
 ## ⚠️ 제한사항
 

@@ -11,10 +11,12 @@
   "dependencies": {
     "jszip": "^3.10.1",
     "turndown": "^7.1.2",
-    "turndown-plugin-gfm": "^1.0.2"
+    "turndown-plugin-gfm": "^1.0.2",
+    "vue": "^3.4.21"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.260",
+    "@vue/compiler-sfc": "^3.4.21",
     "archiver": "^7.0.1",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^6.10.0",
@@ -23,6 +25,7 @@
     "style-loader": "^3.3.4",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
+    "vue-loader": "^17.4.2",
     "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4"
   }

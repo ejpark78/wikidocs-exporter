@@ -16,7 +16,7 @@
 - [x] `[[MARK]]` 마커 제거.
 
 ## 3단계: Side Panel UI 개발 ✅ 완료
-- [x] Vanilla TS 기반 사이드패널 UI.
+- [x] **Vue 3 기반 사이드패널 UI** (Composition API + `<script setup>`).
 - [x] 내보내기 대상 선택 (Obsidian / Joplin).
 - [x] 현재 페이지 정보 표시.
 - [x] 진행률 표시 (현재 챕터, 퍼센트, 실행시간/예상총시간).
@@ -37,6 +37,7 @@
   - [x] `/folders` 엔드포인트로 노트북 생성.
   - [x] `/notes` 엔드포인트로 노트 생성.
   - [x] API 토큰 URL 파라미터 방식.
+  - [x] **자동 토큰 획득**: `POST /auth` → 사용자 승인 폴링 → `GET /auth/check`
 - [x] **책별 내보내기**: 개별 책 다운로드/삭제 버튼.
 
 ## 5단계: Chrome API 연동 ✅ 완료
@@ -95,7 +96,7 @@
 ## 주요 기술 스택
 - **언어**: TypeScript 5.x
 - **빌드**: Webpack 5
-- **UI**: Vanilla TS + HTML/CSS
+- **UI**: Vue 3 (Composition API) + TypeScript
 - **마크다운**: turndown + turndown-plugin-gfm
 - **압축**: JSZip (Obsidian 내보내기), Archiver (패키징)
 - **Chrome API**: Manifest V3, chrome.sidePanel API

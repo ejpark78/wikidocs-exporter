@@ -27,7 +27,7 @@
   ```
 
 ## 3. UI/UX Developer (Side Panel)
-- **Role**: 익스텐션 사이드 패널 UI 개발 (Vanilla TS).
+- **Role**: 익스텐션 사이드 패널 UI 개발 (Vue 3 + TypeScript).
 - **Focus**: 직관적인 내보내기 버튼, 진행률 표시, 대상 선택 (Obsidian/Joplin), 사이드 패널 닫기 요청 처리.
 - **State**:
   ```typescript
@@ -46,10 +46,12 @@
   }
   ```
 - **Side Panel Toggle**: `chrome.runtime.onMessage`로 `CLOSE_SIDEPANEL` 메시지 수신 후 `window.close()` 호출.
+- **Vue 3 Composition API**: `<script setup lang="ts">` 사용, `ref`, `computed`, `watch`, lifecycle hooks 활용.
 
 ## 4. Export Specialist (Obsidian/Joplin)
 - **Role**: 추출된 데이터를 Obsidian/Joplin 친화적 형식으로 변환.
 - **Focus**: YAML Frontmatter 생성, 위키링크, 폴더 구조, 파일 시스템 접근.
+- **Joplin Auto-Auth**: `POST /auth` → 사용자 승인 폴링 → `GET /auth/check` 로 토큰 자동 획득
 - **Export Format**:
   - **Obsidian**: ZIP 파일 다운로드 (JSZip 사용)
   - **Joplin**: Background Script를 통한 Data API 호출
@@ -66,3 +68,16 @@
 ## 7. Language & Response Rules
 - 모든 응답과 설명은 **자연스러운 한국어(Korean)**로 작성하세요.
 - 코드 주석이나 기술적인 용어는 영어로 유지하되, 전체적인 가이드는 한국어를 사용하세요.
+
+## 기술 스택
+
+| 기술 | 용도 |
+|------|------|
+| TypeScript | 타입 안전한 코드 |
+| Vue 3 (Composition API) | 사이드 패널 UI |
+| Webpack 5 | 번들링 |
+| turndown | HTML → Markdown 변환 |
+| turndown-plugin-gfm | GitHub Flavored Markdown 지원 |
+| JSZip | Obsidian용 ZIP 파일 생성 |
+| Chrome Manifest V3 | 확장 프로그램 API |
+| chrome.sidePanel API | 사이드 패널 토글 |

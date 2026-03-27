@@ -33,3 +33,6 @@ coverage/
 
 # release
 *.zip
+
+# opencode sessons
+session-*.md

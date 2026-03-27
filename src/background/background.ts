@@ -66,6 +66,20 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
     return true;
   }
 
+  if (message.type === 'JOPLIN_GET_TOKEN') {
+    console.log('[Background] JOPLIN_GET_TOKEN requested');
+    getJoplinTokenWithApproval()
+      .then((token) => {
+        console.log('[Background] JOPLIN_GET_TOKEN success');
+        sendResponse({ success: true, token });
+      })
+      .catch((error) => {
+        console.error('[Background] JOPLIN_GET_TOKEN failed:', error.message);
+        sendResponse({ success: false, error: error.message });
+      });
+    return true;
+  }
+
   if (message.type === 'JOPLIN_EXPORT') {
     if (isExportingJoplin) {
       console.log('[Background] JOPLIN_EXPORT blocked - already in progress');
@@ -145,6 +159,41 @@ function generateIndex(book: WikiDocsBook): string {
     lines.push(`- [[${chapter.title}]]`);
   }
   return lines.join('\n');
+}
+
+async function getJoplinTokenWithApproval(): Promise<string> {
+  const authResponse = await fetch(`${JOPLIN_API_URL}/auth`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  
+  if (!authResponse.ok) {
+    const errorText = await authResponse.text();
+    throw new Error(`Joplin 인증 요청 실패: ${errorText}`);
+  }
+  
+  const authData = await authResponse.json();
+  const authToken = authData.auth_token;
+  
+  const maxAttempts = 60;
+  const pollInterval = 1000;
+  
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    await new Promise(resolve => setTimeout(resolve, pollInterval));
+    
+    const checkResponse = await fetch(`${JOPLIN_API_URL}/auth/check?auth_token=${authToken}`);
+    const checkData = await checkResponse.json();
+    
+    if (checkData.status === 'accepted') {
+      return checkData.token;
+    } else if (checkData.status === 'rejected') {
+      throw new Error('Joplin에서 접근이 거부되었습니다.');
+    }
+  }
+  
+  throw new Error('Joplin 인증 시간이 초과되었습니다. 앱에서 허용해 주세요.');
 }
 
 const openSidePanelTabs = new Set<number>();
