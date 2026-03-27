@@ -6,7 +6,7 @@
         <h1>WikiDocs Exporter</h1>
       </div>
       <button @click="handleCollapse" class="collapse-btn" title="접기">
-        <span>›</span>
+        <span>✕</span>
       </button>
     </header>
 
@@ -28,7 +28,7 @@
         <h2 class="section-title">⚙️ 설정</h2>
         
         <div class="option-group">
-          <label class="option-label">스크랩 간격</label>
+          <label class="option-label">⚙️ 스크랩 간격</label>
           <div class="slider-group">
             <input 
               type="range" 
