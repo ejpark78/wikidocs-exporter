@@ -15,7 +15,7 @@
 ## **Expert Identity**
 - **Chrome Extension Specialist**로 Vue 3 + TypeScript 기반 개발 가능
 - **Manifest V3** 제약 사항 완벽 이해
-- **사이드 패널 UI** 개발 경험丰富
+- **사이드 패널 UI** 개발 경험 많음
 
 ## **Goal: WikiDocs to Obsidian/Joplin Exporter**
 - **목표**: 위키독스(https://wikidocs.net/) 컨텐츠를 Obsidian/Joplin으로 내보내는 Chrome Extension 개발

@@ -48,11 +48,19 @@
 - [x] `chrome.sidePanel.setPanelBehavior()`을 통한 사이드 패널 토글.
 - [x] `CLOSE_SIDEPANEL` 메시지로 사이드 패널 닫기.
 
-## 6단계: 테스트 및 배포 📋 진행 중
-- [x] 단위 테스트: 수동 테스트 완료.
+## 6단계: 테스트 및 배포 ✅ 완료
+- [x] 단위 테스트: Vitest + 27개 테스트 (2026-03-28)
 - [x] E2E 테스트: 실제 위키독스 페이지에서 크롤링 검증.
 - [x] 다양한 강좌 URL 테스트 (45개 챕터 성공).
 - [x] 패키징 스크립트: `npm run pack`으로 ZIP 생성.
+
+## 7단계: 모듈화 및 CLI ✅ 완료 (2026-03-28)
+- [x] **타입 중앙화**: `src/types/index.ts`
+- [x] **core 모듈**: markdown, scraper, image-handler, types
+- [x] **adapters**: SiteAdapter 인터페이스, WikiDocs 어댑터
+- [x] **exporters**: Exporter 인터페이스, Obsidian/Joplin/Markdown
+- [x] **CLI 도구**: scrape, export 명령어
+- [x] **테스트**: Vitest 설정 및 27개 테스트
 
 ## 7단계: 향후 기능 개발 🚀 향후 계획
 
@@ -135,3 +143,71 @@
 - **마크다운**: turndown + turndown-plugin-gfm
 - **압축**: JSZip (Obsidian 내보내기), Archiver (패키징)
 - **Chrome API**: Manifest V3, chrome.sidePanel API
+- **테스트**: Vitest + jsdom
+
+## 프로젝트 파일 구조
+
+```
+src/
+├── core/                       # 사이트 무관 공통 로직
+│   ├── markdown.ts            # HTML → Markdown 변환
+│   ├── image-handler.ts       # 이미지 처리
+│   ├── scraper.ts             # 스크래핑 기본 로직
+│   └── types.ts               # 코어 타입
+│
+├── adapters/                   # 사이트별 구현
+│   ├── interface.ts           # SiteAdapter 인터페이스
+│   └── wikidocs.ts            # WikiDocs 어댑터
+│
+├── exporters/                  # 내보내기
+│   ├── interface.ts           # Exporter 인터페이스
+│   ├── obsidian.ts            # Obsidian REST API
+│   ├── joplin.ts              # Joplin Data API
+│   ├── markdown.ts            # ZIP 다운로드
+│   └── generators/
+│       ├── base.ts            # sanitanizeFilename
+│       ├── frontmatter.ts     # YAML/simple frontmatter
+│       └── index.ts           # INDEX 생성
+│
+├── cli/                        # CLI 도구
+│   ├── index.ts               # 엔트리 포인트
+│   ├── options.ts             # 옵션 파서
+│   └── commands/
+│       ├── scrape.ts
+│       └── export.ts
+│
+├── utils/                      # 유틸리티
+│   ├── storage.ts             # Chrome Storage
+│   ├── image-utils.ts         # 이미지 경로 처리
+│   └── markdown.ts            # (legacy, core로 이동)
+│
+├── content/                    # Chrome Extension
+│   └── content.ts             # 스크래핑 로직
+│
+├── background/
+│   └── background.ts
+│
+├── side-panel/
+│   ├── main.ts
+│   ├── side-panel.ts
+│   └── SidePanel.vue
+│
+└── types/
+    └── index.ts               # 모든 타입 중앙화
+```
+
+## CLI 사용법
+
+```bash
+# 스크래핑
+wikidocs-exporter scrape https://wikidocs.net/book/123
+
+# 내보내기
+wikidocs-exporter export --target=obsidian
+wikidocs-exporter export --target=joplin
+wikidocs-exporter export --target=markdown --include-images
+
+# 테스트
+npm test
+npm run test:ui
+```

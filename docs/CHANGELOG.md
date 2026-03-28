@@ -2,6 +2,29 @@
 
 모든 주요 변경 사항은 이 파일에 기록됩니다.
 
+## [1.3.0] - 2026-03-28
+
+### 추가
+- **모듈화**: core/adapters/exporters 구조로 리팩토링
+  - `src/core/`: 사이트 무관 공통 로직 (markdown, scraper, image-handler, types)
+  - `src/adapters/`: SiteAdapter 인터페이스 + WikiDocs 어댑터
+  - `src/exporters/`: Exporter 인터페이스 + 내보내기 모듈
+- **CLI 도구**: 명령줄 인터페이스 추가
+  - `wikidocs-exporter scrape <url>` - 페이지 스크래핑
+  - `wikidocs-exporter export --target=obsidian|joplin|markdown` - 내보내기
+- **테스트**: Vitest + 27개 단위 테스트
+  - frontmatter/generators 테스트
+  - index/generators 테스트
+  - sanitizeFilename 테스트
+  - image-utils 테스트
+  - CLI options 테스트
+- **Joplin 폴더 구조**: `/Wikidocs/책제목` 형태로 저장
+
+### 변경
+- Obsidian 내보내기: `/WikiDocs/책제목` 폴더 구조
+- 타입 정의 중앙화: `src/types/index.ts`
+- API 설정 중앙화: `src/utils/storage.ts`
+
 ## [1.2.2] - 2026-03-28
 
 ### 수정

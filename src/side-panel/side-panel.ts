@@ -1,4 +1,4 @@
-import { loadOptions, saveOptions } from '../utils/storage';
+import { loadOptions, saveOptions, getJoplinToken, setJoplinToken } from '../utils/storage';
 import { exportToObsidian } from '../export';
 import type { ExportOptions, ExportProgress, WikiDocsBook } from '../types/wikidocs';
 
@@ -56,9 +56,9 @@ async function init() {
 }
 
 async function loadJoplinToken() {
-  const stored = await chrome.storage.local.get('joplin_token');
-  if (stored.joplin_token) {
-    elements.joplinToken.value = stored.joplin_token;
+  const token = await getJoplinToken();
+  if (token) {
+    elements.joplinToken.value = token;
   }
 }
 
@@ -286,7 +286,7 @@ async function handleSaveToken() {
   const token = elements.joplinToken.value.trim();
   console.log('[SidePanel] Save token clicked, token length:', token.length);
   if (token) {
-    await chrome.storage.local.set({ joplin_token: token });
+    await setJoplinToken(token);
     console.log('[SidePanel] Token saved successfully');
     elements.saveTokenBtn.textContent = '저장됨!';
     setTimeout(() => {
@@ -365,11 +365,6 @@ async function handleScrape() {
     showError('콘텐츠 스크립트를 주입할 수 없습니다.');
     console.error(error);
   }
-}
-
-async function getJoplinToken(): Promise<string | null> {
-  const stored = await chrome.storage.local.get('joplin_token');
-  return stored.joplin_token || null;
 }
 
 function startPolling() {

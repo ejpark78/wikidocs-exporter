@@ -1,6 +1,9 @@
 import JSZip from 'jszip';
 import type { WikiDocsBook, ExportOptions } from '../types/wikidocs';
 import { sanitizeFilename } from './base';
+import { fetchImageAsBase64 } from '../utils/image-utils';
+import { generateFrontmatter } from './generators/frontmatter';
+import { generateIndex } from './generators/index';
 
 let isDownloading = false;
 
@@ -42,14 +45,7 @@ async function doExport(
             let base64Data = image.base64;
             
             if (!base64Data || !base64Data.includes(',')) {
-              const response = await fetch(image.url);
-              const blob = await response.blob();
-              const reader = await new Promise<string>((resolve) => {
-                const r = new FileReader();
-                r.onloadend = () => resolve(r.result as string);
-                r.readAsDataURL(blob);
-              });
-              base64Data = reader;
+              base64Data = await fetchImageAsBase64(image.url);
             }
             
             const data = base64Data.split(',')[1];
@@ -67,7 +63,7 @@ async function doExport(
     let content = chapter.content;
     
     if (options.addFrontmatter) {
-      content = generateYamlFrontmatter(chapter, book) + content;
+      content = generateFrontmatter(chapter, book) + content;
     }
     
     if (options.includeImages) {
@@ -81,7 +77,7 @@ async function doExport(
   }
 
   if (options.createIndex) {
-    const indexContent = generateMarkdownIndex(book);
+    const indexContent = generateIndex(book, 'markdown');
     folder.file('INDEX.md', indexContent);
   }
 
@@ -95,39 +91,4 @@ async function doExport(
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-}
-
-function generateYamlFrontmatter(
-  chapter: WikiDocsBook['chapters'][0],
-  book: WikiDocsBook
-): string {
-  const date = new Date().toISOString().split('T')[0];
-  const tags = book.title.split(/\s+/).map(t => t.replace(/[^a-zA-Z0-9가-힣]/g, ''));
-
-  return `---
-title: "${chapter.title}"
-source: ${chapter.url}
-date: ${date}
-tags:
-  - wiki-docs
-  - ${tags.join('\n  - ')}
----
-
-`;
-}
-
-function generateMarkdownIndex(book: WikiDocsBook): string {
-  const lines = [
-    `# 📚 ${book.title}`,
-    '',
-    '## 📑 Chapters',
-    '',
-  ];
-
-  for (const chapter of book.chapters) {
-    const filename = sanitizeFilename(chapter.title);
-    lines.push(`- [${chapter.title}](./${filename}.md)`);
-  }
-
-  return lines.join('\n');
 }

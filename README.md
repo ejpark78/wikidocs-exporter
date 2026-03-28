@@ -173,7 +173,7 @@ tags:
 | Turndown | HTML → Markdown 변환 |
 | turndown-plugin-gfm | GitHub Flavored Markdown 지원 |
 | JSZip | ZIP 파일 생성 |
-| Archiver | 확장 프로그램 패키징 |
+| Vitest | 단위 테스트 |
 | Chrome Manifest V3 | 확장 프로그램 API |
 | chrome.sidePanel API | 사이드 패널 토글 |
 | GitHub Actions | CI/CD 자동화 |
@@ -185,6 +185,7 @@ wikidocs-exporter/
 ├── manifest.json           # Chrome Extension 매니페스트 (V3)
 ├── package.json
 ├── vite.config.ts          # Vite 빌드 설정
+├── vitest.config.ts        # Vitest 설정
 ├── tsconfig.json
 ├── scripts/
 │   └── pack.js           # ZIP 패키징 스크립트
@@ -199,25 +200,80 @@ wikidocs-exporter/
 ├── ISSUES.md              # 이슈 템플릿
 ├── LICENSE.md             # MIT 라이선스
 ├── src/
+│   ├── core/                       # 사이트 무관 공통 로직
+│   │   ├── markdown.ts            # HTML → Markdown 변환
+│   │   ├── image-handler.ts       # 이미지 처리
+│   │   ├── scraper.ts            # 스크래핑 기본 로직
+│   │   └── types.ts              # 코어 타입
+│   ├── adapters/                   # 사이트별 구현
+│   │   ├── interface.ts           # SiteAdapter 인터페이스
+│   │   └── wikidocs.ts           # WikiDocs 어댑터
+│   ├── exporters/                  # 내보내기
+│   │   ├── interface.ts          # Exporter 인터페이스
+│   │   ├── obsidian.ts           # Obsidian REST API
+│   │   ├── joplin.ts             # Joplin Data API
+│   │   ├── markdown.ts           # ZIP 다운로드
+│   │   └── generators/
+│   │       ├── base.ts           # sanitizeFilename
+│   │       ├── frontmatter.ts    # YAML/simple frontmatter
+│   │       └── index.ts          # INDEX 생성
+│   ├── cli/                       # CLI 도구
+│   │   ├── index.ts              # 엔트리 포인트
+│   │   ├── options.ts            # 옵션 파서
+│   │   └── commands/
+│   │       ├── scrape.ts
+│   │       └── export.ts
+│   ├── utils/                     # 유틸리티
+│   │   ├── storage.ts            # Chrome Storage
+│   │   ├── image-utils.ts        # 이미지 경로 처리
+│   │   └── markdown.ts           # (legacy)
 │   ├── types/
-│   │   ├── wikidocs.ts    # 타입 정의
-│   │   └── turndown.d.ts  # turndown 타입
-│   ├── utils/
-│   │   ├── markdown.ts    # 마크다운 변환 유틸
-│   │   └── storage.ts     # Chrome Storage 유틸
+│   │   └── index.ts             # 모든 타입 중앙화
 │   ├── content/
-│   │   └── content.ts     # Content Script (크롤링)
+│   │   └── content.ts           # Content Script (크롤링)
 │   ├── background/
-│   │   └── background.ts  # Background Service Worker
-│   ├── side-panel/
-│   │   ├── main.ts        # Vue 앱 엔트리
-│   │   ├── SidePanel.vue  # Vue 3 컴포넌트
-│   │   ├── side-panel.html
-│   │   └── side-panel.css
-│   └── export/
-│       ├── base.ts        # 공통 유틸
-│       ├── obsidian.ts    # Obsidian 내보내기
-│       └── index.ts
+│   │   └── background.ts        # Background Service Worker
+│   └── side-panel/
+│       ├── main.ts               # Vue 앱 엔트리
+│       ├── SidePanel.vue         # Vue 3 컴포넌트
+│       ├── side-panel.html
+│       └── side-panel.css
+```
+
+## 🧪 테스트
+
+```bash
+# 테스트 실행
+npm test
+
+# UI로 테스트 확인
+npm run test:ui
+```
+
+현재 27개의 단위 테스트가 포함되어 있습니다:
+- frontmatter 생성 테스트
+- index 생성 테스트
+- 파일명 정제 테스트
+- 이미지 유틸 테스트
+- CLI 옵션 파서 테스트
+
+### CLI 도구 사용
+
+```bash
+# 스크래핑
+npm run cli -- scrape https://wikidocs.net/book/123
+
+# Obsidian으로 내보내기
+npm run cli -- export --target=obsidian
+
+# Joplin으로 내보내기
+npm run cli -- export --target=joplin
+
+# Markdown ZIP으로 내보내기
+npm run cli -- export --target=markdown --include-images
+
+# 옵션 확인
+npm run cli -- help
 ```
 
 ### 로컬 패키징

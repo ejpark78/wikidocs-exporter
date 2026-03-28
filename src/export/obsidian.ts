@@ -1,30 +1,25 @@
 import type { WikiDocsBook, ExportOptions } from '../types/wikidocs';
 import { sanitizeFilename } from './base';
+import { getObsidianApiKey, getObsidianUseHttps } from '../utils/storage';
+import { replaceImagePaths } from '../utils/image-utils';
+import { generateFrontmatter } from './generators/frontmatter';
+import { generateIndex } from './generators/index';
 
 const OBSIDIAN_API_URL_HTTP = 'http://127.0.0.1:27123';
 const OBSIDIAN_API_URL_HTTPS = 'https://127.0.0.1:27124';
-
-async function getApiKey(): Promise<string> {
-  const stored = await chrome.storage.local.get('obsidian_api_key');
-  if (!stored.obsidian_api_key) {
-    throw new Error('Obsidian API 키가 설정되지 않았습니다.\n\nObsidian → Settings → Local REST API → API Key\n(Settings에서 "Enable Non-encrypted (HTTP) Server" 활성화)');
-  }
-  return stored.obsidian_api_key;
-}
-
-async function getObsidianUrl(): Promise<string> {
-  const stored = await chrome.storage.local.get('obsidian_use_https');
-  const useHttps = stored.obsidian_use_https === true;
-  console.log('[Obsidian] Using HTTPS:', useHttps);
-  return useHttps ? OBSIDIAN_API_URL_HTTPS : OBSIDIAN_API_URL_HTTP;
-}
 
 export async function exportToObsidian(
   book: WikiDocsBook,
   options: ExportOptions
 ): Promise<void> {
-  const apiKey = await getApiKey();
-  const baseUrl = await getObsidianUrl();
+  const apiKey = await getObsidianApiKey();
+  
+  if (!apiKey) {
+    throw new Error('Obsidian API 키가 설정되지 않았습니다.\n\nObsidian → Settings → Local REST API → API Key\n(Settings에서 "Enable Non-encrypted (HTTP) Server" 활성화)');
+  }
+  
+  const useHttps = await getObsidianUseHttps();
+  const baseUrl = useHttps ? OBSIDIAN_API_URL_HTTPS : OBSIDIAN_API_URL_HTTP;
   const folderName = sanitizeFilename(book.title);
   const folderPath = `/WikiDocs/${folderName}`;
 
@@ -33,13 +28,7 @@ export async function exportToObsidian(
   for (const chapter of book.chapters) {
     const filename = `${sanitizeFilename(chapter.title)}.md`;
     const filePath = `${folderPath}/${filename}`;
-    let content = chapter.content;
-
-    // Replace relative image paths with full URLs
-    for (const image of chapter.images) {
-      const relativePath = `../images/${image.filename}`;
-      content = content.replace(relativePath, image.url);
-    }
+    let content = replaceImagePaths(chapter);
 
     if (options.addFrontmatter) {
       content = generateFrontmatter(chapter, book) + content;
@@ -49,7 +38,7 @@ export async function exportToObsidian(
   }
 
   if (options.createIndex) {
-    const indexContent = generateIndex(book);
+    const indexContent = generateIndex(book, 'obsidian');
     await createFile(baseUrl, `${folderPath}/INDEX.md`, indexContent, 'text/markdown', apiKey);
   }
 
@@ -81,39 +70,4 @@ async function createFile(baseUrl: string, path: string, content: string, mimeTy
     console.error('[Obsidian] Fetch error:', error);
     throw error;
   }
-}
-
-function generateFrontmatter(
-  chapter: WikiDocsBook['chapters'][0],
-  book: WikiDocsBook
-): string {
-  const date = new Date().toISOString().split('T')[0];
-  const tags = book.title.split(/\s+/).map(t => t.replace(/[^a-zA-Z0-9가-힣]/g, ''));
-
-  return `---
-title: "${chapter.title}"
-source: ${chapter.url}
-date: ${date}
-tags:
-  - wiki-docs
-  - ${tags.join('\n  - ')}
----
-
-`;
-}
-
-function generateIndex(book: WikiDocsBook): string {
-  const lines = [
-    `# 📚 ${book.title}`,
-    '',
-    '## 📑 Chapters',
-    '',
-  ];
-
-  for (const chapter of book.chapters) {
-    const filename = sanitizeFilename(chapter.title);
-    lines.push(`- [${chapter.title}](./${filename}.md)`);
-  }
-
-  return lines.join('\n');
 }

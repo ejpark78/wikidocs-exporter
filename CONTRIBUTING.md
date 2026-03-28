@@ -4,7 +4,7 @@ WikiDocs Exporter에 기여해 주셔서 감사합니다!
 
 ## 개발 환경 설정
 
-### 필수要件
+### 필수 조건
 
 - Node.js 18+
 - npm 9+

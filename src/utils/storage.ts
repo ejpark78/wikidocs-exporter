@@ -2,6 +2,12 @@ import type { ExportOptions, ExportProgress, WikiDocsBook } from '../types/wikid
 
 const STORAGE_KEY = 'wikidocs_exporter_options';
 
+export const StorageKeys = {
+  OBSIDIAN_API_KEY: 'obsidian_api_key',
+  OBSIDIAN_USE_HTTPS: 'obsidian_use_https',
+  JOPLIN_TOKEN: 'joplin_token',
+} as const;
+
 export interface StoredOptions {
   exportOptions: ExportOptions;
   recentBooks: Array<{ title: string; url: string; date: string }>;
@@ -76,4 +82,31 @@ export function sendError(error: string): void {
     type: 'SCRAPE_ERROR',
     payload: { error },
   });
+}
+
+export async function getObsidianApiKey(): Promise<string | null> {
+  const stored = await chrome.storage.local.get(StorageKeys.OBSIDIAN_API_KEY);
+  return stored[StorageKeys.OBSIDIAN_API_KEY] || null;
+}
+
+export async function setObsidianApiKey(apiKey: string): Promise<void> {
+  await chrome.storage.local.set({ [StorageKeys.OBSIDIAN_API_KEY]: apiKey });
+}
+
+export async function getObsidianUseHttps(): Promise<boolean> {
+  const stored = await chrome.storage.local.get(StorageKeys.OBSIDIAN_USE_HTTPS);
+  return stored[StorageKeys.OBSIDIAN_USE_HTTPS] === true;
+}
+
+export async function setObsidianUseHttps(useHttps: boolean): Promise<void> {
+  await chrome.storage.local.set({ [StorageKeys.OBSIDIAN_USE_HTTPS]: useHttps });
+}
+
+export async function getJoplinToken(): Promise<string | null> {
+  const stored = await chrome.storage.local.get(StorageKeys.JOPLIN_TOKEN);
+  return stored[StorageKeys.JOPLIN_TOKEN] || null;
+}
+
+export async function setJoplinToken(token: string): Promise<void> {
+  await chrome.storage.local.set({ [StorageKeys.JOPLIN_TOKEN]: token });
 }
