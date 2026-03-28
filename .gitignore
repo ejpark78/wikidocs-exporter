@@ -40,3 +40,5 @@ session-*.md
 wikidocs-exporter/*
 
 logs/*
+
+.opencode

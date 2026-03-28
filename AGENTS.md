@@ -84,3 +84,19 @@
 | JSZip | ZIP 파일 생성 |
 | Chrome Manifest V3 | 확장 프로그램 API |
 | chrome.sidePanel API | 사이드 패널 토글 |
+
+## 로깅 규칙
+- 모든 응답의 시작 부분에 현재 시간(KST)을 `[YYYY-MM-DD HH:mm:ss]` 형식으로 포함하세요.
+- 세션이 종료되거나 특정 단계가 완료될 때마다 소요 시간을 계산하여 표시하세요.
+
+## 핵심 문서 경로
+- **개발 계획 및 진행 상황**: `./docs/PLAN.md`
+- **기능 개선 아이디어**: `./docs/FEATURE_ENHANCEMENTS.md`
+- **이슈 관리 기록**: `./docs/ISSUES.md`
+- **프롬프트 템플릿**: `./docs/PROMPTS.md`
+- **변경 이력**: `./docs/CHANGELOG.md`
+- **기여 방법**: `./CONTRIBUTING.md`
+
+## 작업 규칙
+- 새로운 기능을 구현하기 전에는 반드시 `PLAN.md`를 확인하세요.
+- 이슈 해결 후에는 `ISSUES.md`와 `CHANGELOG.md`를 업데이트하세요.
