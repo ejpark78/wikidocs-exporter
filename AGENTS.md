@@ -98,5 +98,5 @@
 - **기여 방법**: `./CONTRIBUTING.md`
 
 ## 작업 규칙
-- 새로운 기능을 구현하기 전에는 반드시 `PLAN.md`를 확인하세요.
-- 이슈 해결 후에는 `ISSUES.md`와 `CHANGELOG.md`를 업데이트하세요.
+- 새로운 기능을 구현하기 전에는 반드시 `./docs/PLAN.md`를 확인하세요.
+- 이슈 해결 후에는 `./docs/ISSUES.md`와 `./docs/CHANGELOG.md`를 업데이트하세요.
