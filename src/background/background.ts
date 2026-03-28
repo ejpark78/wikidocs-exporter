@@ -1,4 +1,5 @@
-import type { ExportProgress, WikiDocsBook, Message } from '../types/wikidocs';
+import type { ExportOptions, ExportProgress, WikiDocsBook, Message } from '../types/wikidocs';
+import { exportToJoplin } from '../export/joplin';
 
 const JOPLIN_API_URL = 'http://localhost:41184';
 let isExportingJoplin = false;
@@ -116,8 +117,14 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
     
     isExportingJoplin = true;
     const { book, token } = message.payload as { book: WikiDocsBook; token: string };
+    const exportOptions: ExportOptions = { 
+      target: 'joplin', 
+      includeImages: false, 
+      addFrontmatter: true, 
+      createIndex: true 
+    };
     console.log('[Background] JOPLIN_EXPORT started for:', book.title);
-    exportToJoplinViaBackground(book, token).then(() => {
+    exportToJoplin(book, exportOptions, token).then(() => {
       console.log('[Background] JOPLIN_EXPORT completed');
       isExportingJoplin = false;
       sendResponse({ success: true });

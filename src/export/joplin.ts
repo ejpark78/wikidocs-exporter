@@ -9,19 +9,20 @@ const JOPLIN_API_URL = 'http://localhost:41184';
 
 export async function exportToJoplin(
   book: WikiDocsBook,
-  options: ExportOptions
+  options: ExportOptions,
+  token?: string
 ): Promise<void> {
-  const token = await getJoplinToken();
+  const joplinToken = token || await getJoplinToken();
   
-  if (!token) {
+  if (!joplinToken) {
     throw new Error('Joplin API 토큰이 설정되지 않았습니다.\n\n설정 방법:\n1. Joplin 앱을 열기\n2. 도구 → 웹 클리퍼(Web Clipper) → 활성화\n3. 고급 설정 → API 토큰 복사\n4. 확장 프로그램에서 토큰을 입력해주세요.');
   }
 
   let rootFolder;
   let bookFolder;
   try {
-    rootFolder = await getOrCreateRootFolder(token);
-    bookFolder = await createBookFolder(book.title, rootFolder.id, token);
+    rootFolder = await getOrCreateRootFolder(joplinToken);
+    bookFolder = await createBookFolder(book.title, rootFolder.id, joplinToken);
   } catch (error) {
     throw new Error(`Joplin에 연결할 수 없습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}\n\nJoplin 앱이 실행 중이고 웹 클리퍼가 활성화되어 있는지 확인해주세요.`);
   }
@@ -36,7 +37,7 @@ export async function exportToJoplin(
       sanitizeFilename(chapter.title),
       frontmatter + content,
       bookFolder.id,
-      token
+      joplinToken
     );
   }
 
@@ -46,7 +47,7 @@ export async function exportToJoplin(
       'INDEX',
       indexContent,
       bookFolder.id,
-      token
+      joplinToken
     );
   }
 }
@@ -68,10 +69,9 @@ async function getOrCreateRootFolder(token: string): Promise<{ id: string }> {
     return { id: rootFolder.id };
   }
   
-  const createResponse = await fetch(`${JOPLIN_API_URL}/folders`, {
+  const createResponse = await fetch(`${JOPLIN_API_URL}/folders?token=${encodeURIComponent(token)}`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ title: 'Wikidocs' }),
@@ -86,10 +86,9 @@ async function getOrCreateRootFolder(token: string): Promise<{ id: string }> {
 }
 
 async function createBookFolder(title: string, parentId: string, token: string): Promise<{ id: string }> {
-  const response = await fetch(`${JOPLIN_API_URL}/folders`, {
+  const response = await fetch(`${JOPLIN_API_URL}/folders?token=${encodeURIComponent(token)}`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -112,10 +111,9 @@ async function createNote(
   parentId: string,
   token: string
 ): Promise<void> {
-  const response = await fetch(`${JOPLIN_API_URL}/notes`, {
+  const response = await fetch(`${JOPLIN_API_URL}/notes?token=${encodeURIComponent(token)}`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
