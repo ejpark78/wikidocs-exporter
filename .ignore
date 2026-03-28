@@ -1,6 +1,3 @@
 # release
-*.zip
-
-wikidocs-exporter/*
-
-.opencode
+.opencode/
+release/
