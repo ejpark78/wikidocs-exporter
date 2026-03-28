@@ -113,11 +113,10 @@
             </div>
             <label class="checkbox-item">
               <input type="checkbox" v-model="obsidianUseHttps">
-              <span>HTTPS 사용</span>
             </label>
             <small class="help-text">
               Obsidian → Settings → Local REST API → API Key<br>
-              (HTTPS 사용 시 "Enable SSL/TLS" 활성화)
+              (Enable Non-encryped HTTP Server 활성화)
             </small>
           </template>
           
@@ -307,7 +306,7 @@ async function checkObsidianConnection() {
 async function verifyObsidianConnection() {
   if (!obsidianApiKey.value) return;
   
-  const baseUrl = obsidianUseHttps.value ? 'https://127.0.0.1:27123' : 'http://127.0.0.1:27123';
+  const baseUrl = 'http://127.0.0.1:27123';
   
   try {
     const response = await fetch(baseUrl + '/', {
@@ -331,7 +330,7 @@ async function handleConnectObsidian() {
     return;
   }
   
-  const baseUrl = obsidianUseHttps.value ? 'https://127.0.0.1:27123' : 'http://127.0.0.1:27123';
+  const baseUrl = 'http://127.0.0.1:27123';
   
   try {
     const response = await fetch(baseUrl + '/', {
