@@ -1,6 +1,6 @@
 # 📚 WikiDocs Exporter
 
-[한국어](README.md)
+[한국어](../README.md)
 
 [![Build](https://img.shields.io/github/actions/workflow/status/ejpark78/wikidocs-exporter/release.yml)](https://github.com/ejpark78/wikidocs-exporter/actions)
 [![Version](https://img.shields.io/github/v/release/ejpark78/wikidocs-exporter)](https://github.com/ejpark78/wikidocs-exporter/releases)
