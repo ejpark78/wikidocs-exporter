@@ -111,9 +111,6 @@
                 {{ isConnectingObsidian ? '연결 확인 중...' : '연결' }}
               </button>
             </div>
-            <label class="checkbox-item">
-              <input type="checkbox" v-model="obsidianUseHttps">
-            </label>
             <small class="help-text">
               Obsidian → Settings → Local REST API → API Key<br>
               (Enable Non-encryped HTTP Server 활성화)
@@ -219,7 +216,6 @@ const isExporting = ref<boolean>(false);
 const obsidianConnected = ref<boolean>(false);
 const isConnectingObsidian = ref<boolean>(false);
 const obsidianApiKey = ref<string>('');
-const obsidianUseHttps = ref<boolean>(false);
 const scrapeDelay = ref<number>(3);
 const scrapeStartTime = ref<number | null>(null);
 
@@ -298,7 +294,6 @@ async function checkObsidianConnection() {
   const stored = await chrome.storage.local.get(['obsidian_api_key', 'obsidian_use_https']);
   if (stored.obsidian_api_key) {
     obsidianApiKey.value = stored.obsidian_api_key;
-    obsidianUseHttps.value = stored.obsidian_use_https === true;
     await verifyObsidianConnection();
   }
 }
@@ -346,8 +341,7 @@ async function handleConnectObsidian() {
     if (response.ok) {
       obsidianConnected.value = true;
       await chrome.storage.local.set({ 
-        obsidian_api_key: obsidianApiKey.value,
-        obsidian_use_https: obsidianUseHttps.value 
+        obsidian_api_key: obsidianApiKey.value
       });
       alert('Obsidian에 연결되었습니다!');
     } else {
