@@ -111,9 +111,13 @@
                 {{ isConnectingObsidian ? '연결 확인 중...' : '연결' }}
               </button>
             </div>
+            <label class="checkbox-item">
+              <input type="checkbox" v-model="obsidianUseHttps">
+              <span>HTTPS 사용</span>
+            </label>
             <small class="help-text">
               Obsidian → Settings → Local REST API → API Key<br>
-              (Settings에서 "Enable Non-encrypted (HTTP) Server" 활성화)
+              (HTTPS 사용 시 "Enable SSL/TLS" 활성화)
             </small>
           </template>
           
@@ -213,6 +217,7 @@ const isGettingToken = ref<boolean>(false);
 const obsidianConnected = ref<boolean>(false);
 const isConnectingObsidian = ref<boolean>(false);
 const obsidianApiKey = ref<string>('');
+const obsidianUseHttps = ref<boolean>(false);
 const scrapeDelay = ref<number>(3);
 const scrapeStartTime = ref<number | null>(null);
 
@@ -288,9 +293,10 @@ async function loadJoplinToken() {
 }
 
 async function checkObsidianConnection() {
-  const stored = await chrome.storage.local.get('obsidian_api_key');
+  const stored = await chrome.storage.local.get(['obsidian_api_key', 'obsidian_use_https']);
   if (stored.obsidian_api_key) {
     obsidianApiKey.value = stored.obsidian_api_key;
+    obsidianUseHttps.value = stored.obsidian_use_https === true;
     await verifyObsidianConnection();
   }
 }
@@ -298,8 +304,10 @@ async function checkObsidianConnection() {
 async function verifyObsidianConnection() {
   if (!obsidianApiKey.value) return;
   
+  const baseUrl = obsidianUseHttps.value ? 'https://127.0.0.1:27123' : 'http://127.0.0.1:27123';
+  
   try {
-    const response = await fetch('http://127.0.0.1:27123/', {
+    const response = await fetch(baseUrl + '/', {
       headers: {
         'Authorization': `Bearer ${obsidianApiKey.value}`
       }
@@ -320,8 +328,10 @@ async function handleConnectObsidian() {
     return;
   }
   
+  const baseUrl = obsidianUseHttps.value ? 'https://127.0.0.1:27123' : 'http://127.0.0.1:27123';
+  
   try {
-    const response = await fetch('http://127.0.0.1:27123/', {
+    const response = await fetch(baseUrl + '/', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${obsidianApiKey.value}`
@@ -333,7 +343,10 @@ async function handleConnectObsidian() {
     
     if (response.ok) {
       obsidianConnected.value = true;
-      await chrome.storage.local.set({ obsidian_api_key: obsidianApiKey.value });
+      await chrome.storage.local.set({ 
+        obsidian_api_key: obsidianApiKey.value,
+        obsidian_use_https: obsidianUseHttps.value 
+      });
       alert('Obsidian에 연결되었습니다!');
     } else {
       const errorText = await response.text();

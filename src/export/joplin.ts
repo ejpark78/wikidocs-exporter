@@ -7,9 +7,7 @@ export async function exportToJoplin(
   book: WikiDocsBook,
   options: ExportOptions
 ): Promise<void> {
-  console.log('[Joplin Export] Starting export...');
   const token = await getJoplinToken();
-  console.log('[Joplin Export] Token:', token ? `${token.substring(0, 10)}...` : 'null');
   
   if (!token) {
     throw new Error('Joplin API 토큰이 설정되지 않았습니다.\n\n설정 방법:\n1. Joplin 앱을 열기\n2. 도구 → 웹 클리퍼(Web Clipper) → 활성화\n3. 고급 설정 → API 토큰 복사\n4. 확장 프로그램에서 토큰을 입력해주세요.');
@@ -21,27 +19,15 @@ export async function exportToJoplin(
   } catch (error) {
     throw new Error(`Joplin에 연결할 수 없습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}\n\nJoplin 앱이 실행 중이고 웹 클리퍼가 활성화되어 있는지 확인해주세요.`);
   }
-  const imageIds: Record<string, string> = {};
-
-  if (options.includeImages) {
-    for (const chapter of book.chapters) {
-      for (const image of chapter.images) {
-        try {
-          const imageId = await uploadResource(image.base64, image.filename, token);
-          imageIds[image.url] = imageId;
-        } catch (error) {
-          console.error(`Failed to upload image: ${image.url}`, error);
-        }
-      }
-    }
-  }
 
   for (let i = 0; i < book.chapters.length; i++) {
     const chapter = book.chapters[i];
     let content = chapter.content;
 
-    for (const [url, imageId] of Object.entries(imageIds)) {
-      content = content.replace(url, `:resources/${imageId}`);
+    // Replace relative image paths with full URLs
+    for (const image of chapter.images) {
+      const relativePath = `../images/${image.filename}`;
+      content = content.replace(relativePath, image.url);
     }
 
     const frontmatter = options.addFrontmatter
@@ -69,14 +55,11 @@ export async function exportToJoplin(
 
 async function getJoplinToken(): Promise<string | null> {
   const stored = await chrome.storage.local.get('joplin_token');
-  console.log('[Joplin Export] Token from storage:', stored.joplin_token ? 'exists' : 'not found');
   return stored.joplin_token || null;
 }
 
 export async function setJoplinToken(token: string): Promise<void> {
-  console.log('[Joplin] Setting token:', token.substring(0, 10) + '...');
   await chrome.storage.local.set({ joplin_token: token });
-  console.log('[Joplin] Token set successfully');
 }
 
 async function checkJoplinConnection(token: string): Promise<boolean> {

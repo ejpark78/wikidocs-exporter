@@ -38,8 +38,25 @@ async function doExport(
     if (imagesFolder) {
       for (const chapter of book.chapters) {
         for (const image of chapter.images) {
-          const base64Data = image.base64.split(',')[1];
-          imagesFolder.file(image.filename, base64Data, { base64: true });
+          try {
+            let base64Data = image.base64;
+            
+            if (!base64Data || !base64Data.includes(',')) {
+              const response = await fetch(image.url);
+              const blob = await response.blob();
+              const reader = await new Promise<string>((resolve) => {
+                const r = new FileReader();
+                r.onloadend = () => resolve(r.result as string);
+                r.readAsDataURL(blob);
+              });
+              base64Data = reader;
+            }
+            
+            const data = base64Data.split(',')[1];
+            imagesFolder.file(image.filename, data, { base64: true });
+          } catch (error) {
+            console.error(`[Markdown] Failed to add image: ${image.url}`, error);
+          }
         }
       }
     }

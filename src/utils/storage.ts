@@ -52,10 +52,23 @@ export function sendProgress(progress: ExportProgress): void {
 }
 
 export function sendComplete(book: WikiDocsBook): void {
-  chrome.runtime.sendMessage({
-    type: 'SCRAPE_COMPLETE',
-    payload: book,
-  });
+  chrome.storage.local.get(['scrapedBooks']).then((result) => {
+    const books: WikiDocsBook[] = Array.isArray(result.scrapedBooks) ? result.scrapedBooks : [];
+    
+    const existingIndex = books.findIndex(b => b.title === book.title);
+    if (existingIndex >= 0) {
+      books[existingIndex] = book;
+    } else {
+      books.push(book);
+    }
+    
+    return chrome.storage.local.set({ scrapedBooks: books });
+  }).then(() => {
+    chrome.runtime.sendMessage({
+      type: 'SCRAPE_COMPLETE',
+      payload: book,
+    }).catch(() => {});
+  }).catch(() => {});
 }
 
 export function sendError(error: string): void {

@@ -5,7 +5,6 @@ let isExportingJoplin = false;
 let shouldStopScraping = false;
 
 chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
-  console.log('[Background] Received message:', message.type);
   
   if (message.type === 'SCRAPE_PROGRESS') {
     chrome.storage.local.set({ currentProgress: message.payload as ExportProgress });
@@ -14,24 +13,31 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
 
   if (message.type === 'SCRAPE_COMPLETE') {
     const newBook = message.payload as WikiDocsBook;
+    
     chrome.storage.local.get(['scrapedBooks']).then((result) => {
-      const books: WikiDocsBook[] = result.scrapedBooks || [];
+      if (!Array.isArray(result.scrapedBooks)) {
+        result.scrapedBooks = [];
+      }
+      const books: WikiDocsBook[] = result.scrapedBooks;
+      
       const existingIndex = books.findIndex(b => b.title === newBook.title);
       if (existingIndex >= 0) {
         books[existingIndex] = newBook;
       } else {
         books.push(newBook);
       }
-      chrome.storage.local.set({ scrapedBooks: books });
-    });
-    chrome.storage.local.set({
-      currentProgress: {
-        status: 'completed',
-        currentChapter: 0,
-        totalChapters: 0,
-        currentChapterTitle: '',
-        progress: 100,
-      } as ExportProgress,
+      
+      return chrome.storage.local.set({ scrapedBooks: books });
+    }).then(() => {
+      return chrome.storage.local.set({
+        currentProgress: {
+          status: 'completed',
+          currentChapter: newBook.chapters.length,
+          totalChapters: newBook.chapters.length,
+          currentChapterTitle: '스크랩 완료!',
+          progress: 100,
+        } as ExportProgress,
+      });
     });
     return true;
   }
@@ -52,9 +58,12 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
 
   if (message.type === 'GET_STATE') {
     chrome.storage.local.get(['currentProgress', 'scrapedBooks']).then((result) => {
+      if (!Array.isArray(result.scrapedBooks)) {
+        result.scrapedBooks = [];
+      }
       sendResponse({
         progress: result.currentProgress || null,
-        books: result.scrapedBooks || [],
+        books: result.scrapedBooks,
       });
     });
     return true;
@@ -62,7 +71,25 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
 
   if (message.type === 'STOP_SCRAPE') {
     shouldStopScraping = true;
-    console.log('[Background] Scraping stop requested');
+    
+    chrome.tabs.query({ url: '*://*.wikidocs.net/*' }, (tabs) => {
+      for (const tab of tabs) {
+        if (tab.id) {
+          chrome.tabs.sendMessage(tab.id, { type: 'STOP_SCRAPE' }).catch(() => {});
+        }
+      }
+    });
+    
+    chrome.storage.local.set({
+      currentProgress: {
+        status: 'idle',
+        currentChapter: 0,
+        totalChapters: 0,
+        currentChapterTitle: '중단됨',
+        progress: 0,
+      },
+    });
+    
     return true;
   }
 
@@ -199,6 +226,7 @@ async function getJoplinTokenWithApproval(): Promise<string> {
 const openSidePanelTabs = new Set<number>();
 
 chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.set({ scrapedBooks: [] });
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 });
 
