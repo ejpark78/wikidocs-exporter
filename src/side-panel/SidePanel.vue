@@ -12,7 +12,7 @@
 
     <main class="sidebar-content">
       <section class="section">
-        <h2 class="section-title">📄 현재 페이지</h2>
+        <h2 class="section-title">📖현재 페이지</h2>
         <div class="page-info">
           <template v-if="currentPage.url">
             <p class="page-title">{{ currentPage.title }}</p>
@@ -25,7 +25,7 @@
       </section>
 
       <section class="section">
-        <h2 class="section-title">📥 스크랩</h2>
+        <h2 class="section-title">📥︎ 스크랩</h2>
         
         <div class="option-group">
           <div class="slider-group">
@@ -47,14 +47,14 @@
             @click="handleScrape" 
             class="btn btn-primary"
           >
-            <span>🔍</span> 스크랩 시작
+            <span>▶️</span> 스크랩 시작
           </button>
           <button 
             v-if="progress?.status === 'scraping' || progress?.status === 'exporting'"
             @click="handleStop" 
             class="btn btn-warning"
           >
-            <span>⏹️</span> 중단
+            <span>⏸️</span> 중단
           </button>
         </div>
         <div class="status-section">
@@ -77,17 +77,17 @@
             <label class="radio-item">
               <input type="radio" v-model="options.target" value="obsidian">
               <span class="radio-check"></span>
-              <span>💎 Obsidian</span>
+              <img src="../../icons/obsidian.png" alt="Obsidian" class="app-icon">
             </label>
             <label class="radio-item">
               <input type="radio" v-model="options.target" value="joplin">
               <span class="radio-check"></span>
-              <span>📒 Joplin</span>
+              <img src="../../icons/joplin.png" alt="Joplin" class="app-icon">
             </label>
             <label class="radio-item">
               <input type="radio" v-model="options.target" value="markdown">
               <span class="radio-check"></span>
-              <span>📄 MarkDown</span>
+              <img src="../../icons/markdown.png" alt="MarkDown" class="app-icon">
             </label>
           </div>
         </div>
@@ -172,7 +172,9 @@
                 <button 
                   class="btn btn-success btn-small" 
                   @click="handleExportSingleBook(index)"
-                >📤</button>
+                  :disabled="isExporting"
+                  title="내보내기"
+                >{{ isExporting ? '⏳' : '🔗' }}</button>
                 <button 
                   class="btn btn-danger btn-small" 
                   @click="handleDeleteBook(index)"
@@ -214,6 +216,7 @@ const error = ref<string>('');
 const joplinToken = ref<string>('');
 const tokenSaveText = ref<string>('저장');
 const isGettingToken = ref<boolean>(false);
+const isExporting = ref<boolean>(false);
 const obsidianConnected = ref<boolean>(false);
 const isConnectingObsidian = ref<boolean>(false);
 const obsidianApiKey = ref<string>('');
@@ -440,6 +443,8 @@ async function handleDeleteBook(index: number) {
 async function handleExportSingleBook(index: number) {
   if (!books.value[index]) return;
   
+  isExporting.value = true;
+  
   try {
     if (options.value.target === 'obsidian') {
       await exportToObsidian(books.value[index], options.value);
@@ -467,6 +472,8 @@ async function handleExportSingleBook(index: number) {
     }
   } catch (e) {
     error.value = e instanceof Error ? e.message : '내보내기 실패';
+  } finally {
+    isExporting.value = false;
   }
 }
 

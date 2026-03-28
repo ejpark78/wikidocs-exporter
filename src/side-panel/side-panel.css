@@ -556,3 +556,10 @@ body {
 .token-status .btn {
   margin-left: auto;
 }
+
+.app-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  border-radius: 3px;
+}
