@@ -2,7 +2,7 @@ import type { WikiDocsBook, ExportOptions } from '../types/wikidocs';
 import { sanitizeFilename } from './base';
 
 const OBSIDIAN_API_URL_HTTP = 'http://127.0.0.1:27123';
-const OBSIDIAN_API_URL_HTTPS = 'https://127.0.0.1:27123';
+const OBSIDIAN_API_URL_HTTPS = 'https://127.0.0.1:27124';
 
 async function getApiKey(): Promise<string> {
   const stored = await chrome.storage.local.get('obsidian_api_key');
