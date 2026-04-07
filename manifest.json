@@ -7,8 +7,6 @@
   "permissions": [
     "activeTab",
     "storage",
-    "downloads",
-    "clipboardWrite",
     "sidePanel",
     "scripting"
   ],
